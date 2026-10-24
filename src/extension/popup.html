@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MarkScrape</title>
+    <style>
+      :root {
+        --bg-primary: #0b0f19;
+        --bg-card: #131b2e;
+        --bg-card-hover: #19233c;
+        --border-subtle: rgba(148, 163, 184, 0.16);
+        --border-focus: rgba(56, 189, 248, 0.45);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --accent-primary: #0ea5e9;
+        --accent-gradient: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+        --accent-gradient-hover: linear-gradient(135deg, #0369a1 0%, #1d4ed8 100%);
+        --picker-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        --picker-gradient-hover: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 340px;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+        padding: 16px;
+        user-select: none;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-logo {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--accent-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 13px;
+        color: #fff;
+        box-shadow: 0 2px 10px rgba(14, 165, 233, 0.3);
+      }
+
+      .brand-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text-primary);
+      }
+
+      .badge {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 2px 7px;
+        border-radius: 999px;
+        background: rgba(14, 165, 233, 0.14);
+        color: #38bdf8;
+        border: 1px solid rgba(56, 189, 248, 0.25);
+      }
+
+      .tab-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 10px;
+        padding: 11px 12px;
+        margin-bottom: 12px;
+      }
+
+      .tab-domain {
+        font-size: 11px;
+        font-weight: 600;
+        color: #38bdf8;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .tab-title {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--text-primary);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+      }
+
+      .option-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 8px;
+        padding: 9px 11px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease;
+      }
+
+      .option-row:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-focus);
+      }
+
+      .option-row input[type='checkbox'] {
+        accent-color: var(--accent-primary);
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+      }
+
+      .option-label {
+        font-size: 12.5px;
+        color: var(--text-primary);
+        font-weight: 500;
+        cursor: pointer;
+      }
+
+      .section-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        padding-left: 2px;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 12px;
+      }
+
+      .actions:last-of-type {
+        margin-bottom: 0;
+      }
+
+      .btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 9.5px 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        transition: all 0.15s ease;
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: var(--accent-gradient);
+        color: #ffffff;
+        box-shadow: 0 3px 12px rgba(2, 132, 199, 0.35);
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: var(--accent-gradient-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-picker {
+        background: var(--picker-gradient);
+        color: #ffffff;
+        box-shadow: 0 3px 12px rgba(124, 58, 237, 0.32);
+      }
+
+      .btn-picker:hover:not(:disabled) {
+        background: var(--picker-gradient-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: var(--bg-card-hover);
+        border-color: var(--border-focus);
+      }
+
+      .status-panel {
+        margin-top: 13px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 9px;
+        padding: 10px 12px;
+        display: none;
+      }
+
+      .status-panel.visible {
+        display: block;
+      }
+
+      .status-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+
+      .status-text {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .status-text.error {
+        color: var(--danger);
+      }
+
+      .status-text.success {
+        color: var(--success);
+      }
+
+      .status-percent {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 5px;
+        background: rgba(148, 163, 184, 0.15);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0%;
+        background: var(--accent-gradient);
+        border-radius: 999px;
+        transition: width 0.2s ease;
+      }
+
+      .stats-row {
+        display: none;
+        margin-top: 8px;
+        padding-top: 7px;
+        border-top: 1px solid var(--border-subtle);
+        font-size: 11px;
+        color: var(--text-secondary);
+        justify-content: space-between;
+      }
+
+      .stats-row.visible {
+        display: flex;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="brand">
+        <div class="brand-logo">M</div>
+        <span class="brand-title">MarkScrape</span>
+      </div>
+      <span class="badge">GFM + Assets</span>
+    </header>
+
+    <section class="tab-card">
+      <div id="tab-domain" class="tab-domain">Loading active tab...</div>
+      <div id="tab-title" class="tab-title">Detecting page title...</div>
+    </section>
+
+    <div class="section-label">Interactive Element Picker</div>
+    <div class="actions">
+      <button id="pick-zip-btn" class="btn btn-picker" type="button">
+        <span>🎯 Pick Element on Page (Preview &amp; Edit)</span>
+      </button>
+    </div>
+
+    <div class="section-label">Full Page Article Scrape</div>
+    <label class="option-row" for="auto-scroll-checkbox">
+      <input type="checkbox" id="auto-scroll-checkbox" checked />
+      <span class="option-label">Auto-scroll for lazy images</span>
+    </label>
+
+    <div class="actions">
+      <button id="preview-page-btn" class="btn btn-picker" type="button">
+        <span>🔍 Preview &amp; Edit Full Page</span>
+      </button>
+      <button id="download-zip-btn" class="btn btn-primary" type="button">
+        <span>Download .ZIP (Markdown + Images)</span>
+      </button>
+      <button id="copy-md-btn" class="btn btn-secondary" type="button">
+        <span>Copy Markdown to Clipboard</span>
+      </button>
+    </div>
+
+    <section id="status-panel" class="status-panel">
+      <div class="status-header">
+        <span id="status-text" class="status-text">Ready</span>
+        <span id="status-percent" class="status-percent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <div id="stats-row" class="stats-row">
+        <span id="stats-images">0 images</span>
+        <span id="stats-time">0.0s</span>
+      </div>
+    </section>
+
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "MarkScrape",
+  "version": "1.0.0",
+  "description": "Production-grade HTML & Asset to GitHub Flavored Markdown Engine with offline image ZIP bundling.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads",
+    "clipboardWrite",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_title": "MarkScrape - Export Page to Markdown",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content-script.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
